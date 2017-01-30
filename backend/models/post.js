@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require('../utils/db');
 
-const Post = sequelize.define('user', {
+const Post = sequelize.define('post', {
     title: {
         type: Sequelize.STRING
     },
@@ -11,4 +11,5 @@ const Post = sequelize.define('user', {
 }, {
     freezeTableName: true
 });
-Post.sync({force: true});
+
+module.exports = Post;

@@ -1,6 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require('../utils/db');
 
+const Post =require("./post");
+
 const User = sequelize.define('user', {
     firstName: {
         type: Sequelize.STRING
@@ -11,6 +13,10 @@ const User = sequelize.define('user', {
 }, {
     freezeTableName: true
 });
+User.hasMany(Post);
+
 User.sync({force: true});
+Post.sync({force: true});
+
 
 module.exports = User;

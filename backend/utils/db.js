@@ -1,8 +1,9 @@
 const Sequelize = require("sequelize");
+const config = require("../config");
 
-const sequelize = new Sequelize('sec_demo', 'root', '11111111', {
-    host: 'sec-demo.clwa0fzcyamd.eu-central-1.rds.amazonaws.com',
-    dialect: 'mysql'
+const sequelize = new Sequelize(config.development.db.name, config.development.db.user, config.development.db.password, {
+    host: config.development.db.uri,
+    dialect: config.development.db.dialect
 });
 
 module.exports = sequelize;
