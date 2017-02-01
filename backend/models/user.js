@@ -1,22 +1,17 @@
-const Sequelize = require("sequelize");
-const sequelize = require('../utils/db');
+"use strict";
 
-const Post =require("./post");
+const models = require('../models');
 
-const User = sequelize.define('user', {
-    firstName: {
-        type: Sequelize.STRING
-    },
-    lastName: {
-        type: Sequelize.STRING
-    }
-}, {
-    freezeTableName: true
-});
-User.hasMany(Post);
+module.exports = function (sequelize, DataTypes) {
+    const User = sequelize.define("User", {
+        username: DataTypes.STRING
+    }, {
+        classMethods: {
+            associate: function (models) {
+                User.hasMany(models.Post);
+            }
+        }
+    });
 
-User.sync({force: true});
-Post.sync({force: true});
-
-
-module.exports = User;
+    return User;
+};

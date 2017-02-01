@@ -1,15 +1,23 @@
-const Sequelize = require("sequelize");
-const sequelize = require('../utils/db');
+"use strict";
 
-const Post = sequelize.define('post', {
-    title: {
-        type: Sequelize.STRING
-    },
-    body: {
-        type: Sequelize.STRING
-    }
-}, {
-    freezeTableName: true
-});
+const models = require('../models');
 
-module.exports = Post;
+module.exports = function (sequelize, DataTypes) {
+    const Post = sequelize.define("Post", {
+        title: DataTypes.STRING,
+        body: DataTypes.STRING
+    }, {
+        classMethods: {
+            associate: function (models) {
+                Post.belongsTo(models.User, {
+                    onDelete: "CASCADE",
+                    foreignKey: {
+                        allowNull: false
+                    }
+                });
+            }
+        }
+    });
+
+    return Post;
+};

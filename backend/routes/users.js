@@ -1,20 +1,32 @@
-const User = require('../models/user');
+"use strict";
+const models = require('../models');
 
 module.exports = function (app) {
-    app.get('/posts', function (req, res) {
-        res.send('hello world');
+    app.get(`/users`, function (req, res) {
+        models.User.findAll({}).then((users) => {
+            res.json(users);
+        });
     });
-    app.post('/posts', function (req, res) {
-        User.create({firstName: 'John', lastName: 'Smith'});
-        res.send('hello world');
+    app.post(`/users`, function (req, res) {
+        models.User.create(req.body).then((user) => {
+            res.json(user);
+        });
     });
-    app.get('/posts/:id', function (req, res) {
-        res.send('hello world');
+    app.get(`/users/:id`, function (req, res) {
+        models.User.findById(req.params.id).then((user) => {
+            res.json(user);
+        });
     });
-    app.put('/posts/:id', function (req, res) {
-        res.send('hello world');
+    app.put(`/users/:id`, function (req, res) {
+        models.User.update(req.body, {where: {id: req.params.id}, returning: false}).then(() => {
+            return models.User.findById(req.params.id)
+        }).then((user) => {
+            res.json(user);
+        });
     });
-    app.delete('/posts/:id', function (req, res) {
-        res.send('hello world');
+    app.delete(`/users/:id`, function (req, res) {
+        models.User.destroy({where: {id: req.params.id}}).then((users) => {
+            res.sendStatus(200);
+        });
     });
 };

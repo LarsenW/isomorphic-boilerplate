@@ -3,11 +3,33 @@
     "host": "localhost",
     "port": 5000,
     "db": {
-      "uri": "sec-demo.clwa0fzcyamd.eu-central-1.rds.amazonaws.com",
-      "dialect": "mysql",
-      "name": "sec_demo",
-      "user": "root",
-      "password": "11111111"
+      "username": "root",
+      "password": "1111",
+      "database": "sec_d",
+      "host": "localhost",
+      "dialect": "mysql"
+    }
+  },
+  "test": {
+    "host": "localhost",
+    "port": 5000,
+    "db": {
+      "username": "root",
+      "password": "1111",
+      "database": "sec_d",
+      "host": "localhost",
+      "dialect": "mysql"
+    }
+  },
+  "production": {
+    "host": "localhost",
+    "port": 5000,
+    "db": {
+      "username": "root",
+      "password": "1111",
+      "database": "sec_d",
+      "host": "localhost",
+      "dialect": "mysql"
     }
   }
 }
