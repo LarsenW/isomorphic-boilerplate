@@ -1,34 +1,58 @@
+"use strict";
 import express  from 'express';
 import React    from 'react';
 import ReactDom from 'react-dom/server';
-import App      from 'components/App';
 import {match, RouterContext} from 'react-router';
 import routes from './routes';
+import {Provider} from 'react-redux';
+import configureStore from './redux/configureStore';
+import {getHeaders, initialize} from 'redux-oauth';
+import cookieParser from 'cookie-parser';
 
 const app = express();
+app.use(cookieParser());
 
 app.use((req, res) => {
+    const store = configureStore();
+    const state = store.getState();
 
-    match({routes, location: req.url}, (error, redirectLocation, renderProps) => {
-        if (redirectLocation) {
-            return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
-        }
-        if (error) {
-            return res.status(500).send(error.message);
-        }
-        if (!renderProps) { // Мы не определили путь, который бы подошел для URL
-            return res.status(404).send('Not found');
-        }
+    store.dispatch(initialize({
+        backend: {
+            apiUrl: 'http://localhost:5000',
+            authProviderPaths: {
+                github: '/auth/github'
+            },
+            signOutPath: null
+        },
+        currentLocation: req.url,
+        cookies: req.cookies
+    })).then(() => {
 
-        const componentHTML = ReactDom.renderToString(<RouterContext {...renderProps} />);
+        match({routes, location: req.url}, (error, redirectLocation, renderProps) => {
+            if (redirectLocation) {
+                return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
+            }
+            if (error) {
+                return res.status(500).send(error.message);
+            }
+            if (!renderProps) {
+                return res.status(404).send('Not found');
+            }
 
-        return res.end(renderHTML(componentHTML));
-    });
+            const componentHTML = ReactDom.renderToString(
+                <Provider store={store}>
+                    <RouterContext {...renderProps} />
+                </Provider>
+            );
+
+            return res.end(renderHTML(componentHTML, state));
+        });
+    })
 });
 
 const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';
 
-function renderHTML(componentHTML) {
+function renderHTML(componentHTML, initialState) {
     return `
     <!DOCTYPE html>
       <html>
@@ -37,9 +61,13 @@ function renderHTML(componentHTML) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Hello React</title>
           <link rel="stylesheet" href="${assetUrl}/public/assets/styles.css">
+          <script type="application/javascript">
+         window.REDUX_INITIAL_STATE = ${JSON.stringify(initialState)};
+       </script>
       </head>
       <body>
         <div id="react-view">${componentHTML}</div>
+        <div id="dev-tools"></div>
         <script type="application/javascript" src="${assetUrl}/public/assets/bundle.js"></script>
       </body>
     </html>

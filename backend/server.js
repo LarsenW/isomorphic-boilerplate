@@ -19,6 +19,10 @@ app.use(bodyParser.json());
 users(app);
 posts(app);
 
+app.get('/test/test', function (req, res) {
+    res.json({time: Date.now()});
+});
+
 models.sequelize.sync().then(() => {
     app.listen(config.development.port, function () {
         console.log('Todo app listening on port' + ' ' + config.development.port);
