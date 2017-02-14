@@ -1,1 +1,1 @@
-# secured-app-demo
+# isomorphic app example
